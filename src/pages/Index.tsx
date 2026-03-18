@@ -582,9 +582,14 @@ export default function Index() {
             <Label>Initial USDC Amount (e.g., 1.25)</Label>
             <Input value={initialUsdcAmountHuman} onChange={(e) => setInitialUsdcAmountHuman(e.target.value)} />
           </div>
-          <Button disabled={!canLaunch} onClick={handleLaunch} className="w-full">
-            Approve USDC &amp; Launch
+          <Button disabled={!canLaunch} onClick={handleLaunch} className="w-full relative z-10">
+            Approve USDC & Launch
           </Button>
+          {!canLaunch && (
+            <p className="text-xs text-muted-foreground">
+              Connect your wallet and fill in all fields above to enable this button.
+            </p>
+          )}
           {status && (
             <pre className="mt-2 whitespace-pre-wrap break-all rounded-md bg-muted p-3 text-xs text-muted-foreground">
               {status}
