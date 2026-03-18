@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useState } from "react";
 import { ConnectKitButton } from "connectkit";
 import { useAccount, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
