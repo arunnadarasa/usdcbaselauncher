@@ -228,7 +228,15 @@ export default function Index() {
     if (!sendRecipient) setSendRecipient(address);
   }, [address, depositRecipient, redeemRecipient, sendRecipient]);
 
-  const canLaunch = Boolean(address && walletClient && factoryAddress && recipient);
+  const canLaunch = Boolean(
+    address &&
+      factoryAddress.trim() &&
+      recipient.trim() &&
+      suffix.trim() &&
+      initialUsdcAmountHuman.trim() &&
+      isAddress(factoryAddress.trim()) &&
+      isAddress(recipient.trim())
+  );
   const initialAmountStr = useMemo(() => initialUsdcAmountHuman, [initialUsdcAmountHuman]);
 
   // Helper to work around viem type strictness with authorizationList
