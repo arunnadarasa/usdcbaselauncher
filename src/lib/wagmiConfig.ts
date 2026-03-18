@@ -14,6 +14,6 @@ export const wagmiConfig = createConfig(
       [baseSepolia.id]: http(RPC_URL),
     },
     appName: "USDC-backed Token Launcher",
-    walletConnectProjectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "placeholder",
+    walletConnectProjectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "be37b17af0fbb579190219af99593a24",
   })
 );
