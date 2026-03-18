@@ -227,6 +227,7 @@ export default function Index() {
 
   // Helper to work around viem type strictness with authorizationList
   const readContract = (params: any) => publicClient!.readContract(params as any) as any;
+  const writeContract = (params: any) => walletClient!.writeContract(params as any) as any;
 
   async function fetchTokenMeta(tokenAddress: `0x${string}`) {
     const sym = await readContract({
