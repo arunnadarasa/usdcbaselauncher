@@ -332,7 +332,7 @@ export default function Index() {
       });
       if (allowance < amount) {
         setStatus("Approving USDC for the wrapped token...");
-        const approveHash = await walletClient.writeContract({
+        const approveHash = await writeContract({
           address: USDC_ADDRESS,
           abi: ERC20_ABI,
           functionName: "approve",
@@ -342,7 +342,7 @@ export default function Index() {
         await publicClient!.waitForTransactionReceipt({ hash: approveHash });
       }
       setStatus("Depositing USDC into wrapped token...");
-      const depositHash = await walletClient.writeContract({
+      const depositHash = await writeContract({
         address: selectedToken as `0x${string}`,
         abi: WRAPPER_ABI,
         functionName: "deposit",
@@ -380,7 +380,7 @@ export default function Index() {
         throw new Error(`Insufficient wrapped token balance. You have ${formatUnits(wrappedBalance, 6)}.`);
       }
       setStatus("Redeeming wrapped token back to USDC...");
-      const redeemHash = await walletClient.writeContract({
+      const redeemHash = await writeContract({
         address: selectedToken as `0x${string}`,
         abi: WRAPPER_ABI,
         functionName: "redeem",
@@ -418,7 +418,7 @@ export default function Index() {
         throw new Error(`Insufficient wrapped token balance. You have ${formatUnits(wrappedBalance, 6)}.`);
       }
       setStatus("Sending wrapped tokens...");
-      const sendHash = await walletClient.writeContract({
+      const sendHash = await writeContract({
         address: selectedToken as `0x${string}`,
         abi: WRAPPER_ABI,
         functionName: "transfer",
@@ -460,7 +460,7 @@ export default function Index() {
         throw new Error(`Insufficient USDC balance. You have ${formatUnits(usdcBalance, 6)} USDC, but attempted ${initialAmountStr}.`);
       }
       setStatus("Approving USDC to factory...");
-      const approveHash = await walletClient.writeContract({
+      const approveHash = await writeContract({
         address: USDC_ADDRESS,
         abi: ERC20_ABI,
         functionName: "approve",
@@ -469,7 +469,7 @@ export default function Index() {
       });
       await publicClient!.waitForTransactionReceipt({ hash: approveHash });
       setStatus("Launching wrapper token...");
-      const launchHash = await walletClient.writeContract({
+      const launchHash = await writeContract({
         address: f as `0x${string}`,
         abi: FACTORY_ABI,
         functionName: "launch",
