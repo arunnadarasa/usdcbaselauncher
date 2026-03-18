@@ -234,12 +234,12 @@ export default function Index() {
       abi: WRAPPER_ABI,
       functionName: "symbol",
     });
-    const name = await publicClient!.readContract({
+    const name = await readContract({
       address: tokenAddress,
       abi: WRAPPER_ABI,
       functionName: "name",
     });
-    const backingUSDC = await publicClient!.readContract({
+    const backingUSDC = await readContract({
       address: tokenAddress,
       abi: WRAPPER_ABI,
       functionName: "backingUSDC",
@@ -314,7 +314,7 @@ export default function Index() {
       if (Number(chainId) !== Number(baseSepolia.id)) {
         await switchChainAsync({ chainId: baseSepolia.id });
       }
-      const usdcBalance = await publicClient!.readContract({
+      const usdcBalance = await readContract({
         address: USDC_ADDRESS,
         abi: ERC20_ABI,
         functionName: "balanceOf",
@@ -323,7 +323,7 @@ export default function Index() {
       if (usdcBalance < amount) {
         throw new Error(`Insufficient USDC balance. You have ${formatUnits(usdcBalance, 6)} USDC.`);
       }
-      const allowance = await publicClient!.readContract({
+      const allowance = await readContract({
         address: USDC_ADDRESS,
         abi: ERC20_ABI,
         functionName: "allowance",
@@ -369,7 +369,7 @@ export default function Index() {
       if (Number(chainId) !== Number(baseSepolia.id)) {
         await switchChainAsync({ chainId: baseSepolia.id });
       }
-      const wrappedBalance = await publicClient!.readContract({
+      const wrappedBalance = await readContract({
         address: selectedToken as `0x${string}`,
         abi: WRAPPER_ABI,
         functionName: "balanceOf",
@@ -407,7 +407,7 @@ export default function Index() {
       if (Number(chainId) !== Number(baseSepolia.id)) {
         await switchChainAsync({ chainId: baseSepolia.id });
       }
-      const wrappedBalance = await publicClient!.readContract({
+      const wrappedBalance = await readContract({
         address: selectedToken as `0x${string}`,
         abi: WRAPPER_ABI,
         functionName: "balanceOf",
@@ -449,7 +449,7 @@ export default function Index() {
       if (Number(chainId) !== Number(baseSepolia.id)) {
         await switchChainAsync({ chainId: baseSepolia.id });
       }
-      const usdcBalance = await publicClient!.readContract({
+      const usdcBalance = await readContract({
         address: USDC_ADDRESS,
         abi: ERC20_ABI,
         functionName: "balanceOf",
