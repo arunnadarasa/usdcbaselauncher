@@ -523,171 +523,235 @@ export default function Index() {
   }
 
   return (
-    <div className="page">
-      <h1 style={{ fontSize: "clamp(24px, 4vw, 42px)", fontWeight: 600, letterSpacing: "-0.5px", marginBottom: 8, color: "hsl(var(--foreground))" }}>
-        USDC-backed Token Launcher
-      </h1>
-      <p className="muted" style={{ marginBottom: 24 }}>Base Sepolia · For educational purposes only · Krump Dance Community</p>
-
-      <div className="card">
-        <h2 style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--foreground))", margin: "0 0 12px" }}>Wallet</h2>
-        <ConnectKitButton />
-        <div className="muted">
-          {address ? `Connected: ${address}` : "Not connected"}
-          {chainId ? ` | ChainId: ${chainId}` : ""}
-        </div>
+    <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
+      <div className="text-center space-y-1">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
+          USDC-backed Token Launcher
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Base Sepolia · For educational purposes only · Krump Dance Community
+        </p>
       </div>
 
-      <div className="card">
-        <h2 style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--foreground))", margin: "0 0 12px" }}>Launch new wrapper token</h2>
-        <label className="field">
-          <span>Factory Address</span>
-          <input className="input" value={factoryAddress} onChange={(e) => setFactoryAddress(e.target.value)} />
-        </label>
-        <label className="field">
-          <span>Recipient (mint initial tokens to)</span>
-          <input className="input" value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder="0x..." />
-        </label>
-        <label className="field">
-          <span>Suffix (e.g., Krump, IKF) - alnum, length 1..16</span>
-          <input className="input" value={suffix} onChange={(e) => setSuffix(e.target.value)} />
-        </label>
-        <label className="field">
-          <span>Initial USDC Amount (human, e.g., 1.25)</span>
-          <input className="input" value={initialUsdcAmountHuman} onChange={(e) => setInitialUsdcAmountHuman(e.target.value)} />
-        </label>
-        <button className="btn primary" disabled={!canLaunch} onClick={handleLaunch}>
-          Approve USDC &amp; Launch
-        </button>
-        <pre className="status">{status}</pre>
-      </div>
+      {/* Wallet */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Wallet</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <ConnectKitButton />
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            {address ? (
+              <>
+                <Badge variant="outline" className="font-mono text-xs">
+                  {address.slice(0, 6)}…{address.slice(-4)}
+                </Badge>
+                {chainId && (
+                  <Badge variant="secondary" className="text-xs">
+                    Chain {chainId}
+                  </Badge>
+                )}
+              </>
+            ) : (
+              <span>Not connected</span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="card">
-        <h2 style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--foreground))", margin: "0 0 12px" }}>Deployed Tokens (Dashboard)</h2>
-        <p className="muted">Tokens launched from this browser are saved locally.</p>
-        {tokens.length === 0 ? (
-          <div className="muted">No tokens yet. Launch one above to see it here.</div>
-        ) : (
-          <>
-            <label className="field">
-              <span>Selected token</span>
-              <select className="input" value={selectedToken} onChange={(e) => setSelectedToken(e.target.value)}>
-                {tokens.map((t) => (
-                  <option key={t.address} value={t.address}>
-                    {t.symbol ? t.symbol : t.address.slice(0, 8)}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <div className="tokenGrid">
-              {tokens.map((t) => {
-                const isSelected = t.address.toLowerCase() === selectedToken.toLowerCase();
-                let backing = "";
-                try {
-                  if (t.backingUSDC !== null && t.backingUSDC !== undefined && String(t.backingUSDC).trim() !== "") {
-                    backing = formatUnits(BigInt(String(t.backingUSDC)), 6);
+      {/* Launch */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Launch new wrapper token</CardTitle>
+          <CardDescription>Deploy a new USDC-backed ERC-20 wrapper</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Factory Address</Label>
+            <Input value={factoryAddress} onChange={(e) => setFactoryAddress(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Recipient (mint initial tokens to)</Label>
+            <Input value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder="0x..." />
+          </div>
+          <div className="space-y-2">
+            <Label>Suffix (e.g., Krump, IKF) — alnum, 1–16 chars</Label>
+            <Input value={suffix} onChange={(e) => setSuffix(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Initial USDC Amount (e.g., 1.25)</Label>
+            <Input value={initialUsdcAmountHuman} onChange={(e) => setInitialUsdcAmountHuman(e.target.value)} />
+          </div>
+          <Button disabled={!canLaunch} onClick={handleLaunch} className="w-full">
+            Approve USDC &amp; Launch
+          </Button>
+          {status && (
+            <pre className="mt-2 whitespace-pre-wrap break-all rounded-md bg-muted p-3 text-xs text-muted-foreground">
+              {status}
+            </pre>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Dashboard */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Deployed Tokens</CardTitle>
+          <CardDescription>Tokens launched from this browser are saved locally.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {tokens.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No tokens yet. Launch one above to see it here.</p>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label>Selected token</Label>
+                <Select value={selectedToken} onValueChange={setSelectedToken}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose a token" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tokens.map((t) => (
+                      <SelectItem key={t.address} value={t.address}>
+                        {t.symbol ? t.symbol : t.address.slice(0, 10) + "…"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-3">
+                {tokens.map((t) => {
+                  const isSelected = t.address.toLowerCase() === selectedToken.toLowerCase();
+                  let backing = "";
+                  try {
+                    if (t.backingUSDC !== null && t.backingUSDC !== undefined && String(t.backingUSDC).trim() !== "") {
+                      backing = formatUnits(BigInt(String(t.backingUSDC)), 6);
+                    }
+                  } catch {
+                    // ignore
                   }
-                } catch {
-                  // ignore
-                }
-                return (
-                  <div key={t.address} className={`tokenCard ${isSelected ? "tokenCardSelected" : ""}`}>
-                    <div style={{ display: "flex", gap: 10, justifyContent: "space-between" }}>
-                      <div>
-                        <div style={{ fontWeight: 700 }}>{t.symbol || t.name || "Wrapped Token"}</div>
-                        <div className="muted" style={{ wordBreak: "break-all" }}>{t.address}</div>
-                      </div>
-                      <div className="muted" style={{ textAlign: "right" }}>
-                        {backing ? `Backed: ${backing} USDC` : ""}
+                  return (
+                    <div
+                      key={t.address}
+                      className={`rounded-lg border p-4 cursor-pointer transition-colors ${
+                        isSelected
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border hover:border-muted-foreground/30"
+                      }`}
+                      onClick={() => setSelectedToken(t.address)}
+                    >
+                      <div className="flex justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="font-semibold text-foreground">
+                            {t.symbol || t.name || "Wrapped Token"}
+                          </div>
+                          <div className="text-xs text-muted-foreground break-all">{t.address}</div>
+                        </div>
+                        {backing && (
+                          <Badge variant="secondary" className="shrink-0 self-start text-xs">
+                            {backing} USDC
+                          </Badge>
+                        )}
                       </div>
                     </div>
-                    <div className="muted" style={{ marginTop: 6 }}>Choose this token to exchange/send below.</div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          <div className="border-t border-border pt-4 space-y-3">
+            <h3 className="text-sm font-medium text-foreground">Add token by address</h3>
+            <div className="space-y-2">
+              <Label>Wrapped token address (0x…)</Label>
+              <Input
+                value={manualTokenAddress}
+                onChange={(e) => setManualTokenAddress(e.target.value)}
+                placeholder="0x25D923fB..."
+              />
             </div>
-          </>
-        )}
-        <div className="sectionSpacer" />
-        <h3 className="sectionTitle">Add token by address</h3>
-        <label className="field">
-          <span>Wrapped token address (0x...)</span>
-          <input className="input" value={manualTokenAddress} onChange={(e) => setManualTokenAddress(e.target.value)} placeholder="0x25D923fB298D6c0cbE6F1F3724654D6E7fD63B63" />
-        </label>
-        <button className="btn" onClick={handleAddManualToken} disabled={!manualTokenAddress.trim()}>
-          Add to dashboard
-        </button>
-      </div>
+            <Button variant="secondary" onClick={handleAddManualToken} disabled={!manualTokenAddress.trim()}>
+              Add to dashboard
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="card">
-        <h2 style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--foreground))", margin: "0 0 12px" }}>Exchange / Send</h2>
-        <p className="muted">Convert between USDC and the wrapped token, or send wrapped tokens to another wallet.</p>
-        <div className="modeTabs" style={{ marginTop: 12 }}>
-          <button className={`btn modeBtn ${mode === "deposit" ? "primary" : ""}`} onClick={() => setMode("deposit")} disabled={!selectedToken}>
-            USDC → Wrapped
-          </button>
-          <button className={`btn modeBtn ${mode === "redeem" ? "primary" : ""}`} onClick={() => setMode("redeem")} disabled={!selectedToken}>
-            Wrapped → USDC
-          </button>
-          <button className={`btn modeBtn ${mode === "send" ? "primary" : ""}`} onClick={() => setMode("send")} disabled={!selectedToken}>
-            Send Wrapped
-          </button>
-        </div>
-        {!selectedToken ? (
-          <div className="muted">Select a token in the dashboard first.</div>
-        ) : (
-          <>
-            {mode === "deposit" && (
-              <div style={{ display: "grid", gap: 12 }}>
-                <label className="field">
-                  <span>USDC amount (human)</span>
-                  <input className="input" value={depositAmountHuman} onChange={(e) => setDepositAmountHuman(e.target.value)} />
-                </label>
-                <label className="field">
-                  <span>Recipient (mint wrapped tokens to)</span>
-                  <input className="input" value={depositRecipient} onChange={(e) => setDepositRecipient(e.target.value)} placeholder="0x..." />
-                </label>
-                <button className="btn primary" onClick={handleDeposit}>Deposit &amp; Mint</button>
-              </div>
-            )}
-            {mode === "redeem" && (
-              <div style={{ display: "grid", gap: 12 }}>
-                <label className="field">
-                  <span>Wrapped amount (human)</span>
-                  <input className="input" value={redeemAmountHuman} onChange={(e) => setRedeemAmountHuman(e.target.value)} />
-                </label>
-                <label className="field">
-                  <span>USDC recipient</span>
-                  <input className="input" value={redeemRecipient} onChange={(e) => setRedeemRecipient(e.target.value)} placeholder="0x..." />
-                </label>
-                <button className="btn primary" onClick={handleRedeem}>Redeem &amp; Withdraw USDC</button>
-              </div>
-            )}
-            {mode === "send" && (
-              <div style={{ display: "grid", gap: 12 }}>
-                <label className="field">
-                  <span>Wrapped amount (human)</span>
-                  <input className="input" value={sendAmountHuman} onChange={(e) => setSendAmountHuman(e.target.value)} />
-                </label>
-                <label className="field">
-                  <span>Recipient wallet</span>
-                  <input className="input" value={sendRecipient} onChange={(e) => setSendRecipient(e.target.value)} placeholder="0x..." />
-                </label>
-                <button className="btn primary" onClick={handleSendWrapped}>Send Wrapped Tokens</button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      {/* Exchange / Send */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Exchange / Send</CardTitle>
+          <CardDescription>
+            Convert between USDC and the wrapped token, or send wrapped tokens.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!selectedToken ? (
+            <p className="text-sm text-muted-foreground">Select a token in the dashboard first.</p>
+          ) : (
+            <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
+              <TabsList className="w-full">
+                <TabsTrigger value="deposit" className="flex-1">USDC → Wrapped</TabsTrigger>
+                <TabsTrigger value="redeem" className="flex-1">Wrapped → USDC</TabsTrigger>
+                <TabsTrigger value="send" className="flex-1">Send</TabsTrigger>
+              </TabsList>
 
-      <div className="card">
-        <h2 style={{ fontSize: 20, fontWeight: 600, color: "hsl(var(--foreground))", margin: "0 0 12px" }}>Optional: automatic verification</h2>
-        <p className="muted">Calls your backend endpoint to run BaseScan/Etherscan verification.</p>
-        <label className="field">
-          <span>Backend Verify URL</span>
-          <input className="input" value={backendVerifyUrl} onChange={(e) => setBackendVerifyUrl(e.target.value)} placeholder="http://localhost:3001/api/verify" />
-        </label>
-      </div>
+              <TabsContent value="deposit" className="space-y-4 pt-2">
+                <div className="space-y-2">
+                  <Label>USDC amount</Label>
+                  <Input value={depositAmountHuman} onChange={(e) => setDepositAmountHuman(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Recipient</Label>
+                  <Input value={depositRecipient} onChange={(e) => setDepositRecipient(e.target.value)} placeholder="0x..." />
+                </div>
+                <Button onClick={handleDeposit} className="w-full">Deposit &amp; Mint</Button>
+              </TabsContent>
+
+              <TabsContent value="redeem" className="space-y-4 pt-2">
+                <div className="space-y-2">
+                  <Label>Wrapped amount</Label>
+                  <Input value={redeemAmountHuman} onChange={(e) => setRedeemAmountHuman(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>USDC recipient</Label>
+                  <Input value={redeemRecipient} onChange={(e) => setRedeemRecipient(e.target.value)} placeholder="0x..." />
+                </div>
+                <Button onClick={handleRedeem} className="w-full">Redeem &amp; Withdraw USDC</Button>
+              </TabsContent>
+
+              <TabsContent value="send" className="space-y-4 pt-2">
+                <div className="space-y-2">
+                  <Label>Wrapped amount</Label>
+                  <Input value={sendAmountHuman} onChange={(e) => setSendAmountHuman(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Recipient wallet</Label>
+                  <Input value={sendRecipient} onChange={(e) => setSendRecipient(e.target.value)} placeholder="0x..." />
+                </div>
+                <Button onClick={handleSendWrapped} className="w-full">Send Wrapped Tokens</Button>
+              </TabsContent>
+            </Tabs>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Verification */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Optional: automatic verification</CardTitle>
+          <CardDescription>Calls your backend endpoint to run BaseScan/Etherscan verification.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Label>Backend Verify URL</Label>
+          <Input
+            value={backendVerifyUrl}
+            onChange={(e) => setBackendVerifyUrl(e.target.value)}
+            placeholder="http://localhost:3001/api/verify"
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
