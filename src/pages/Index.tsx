@@ -478,7 +478,7 @@ export default function Index() {
       });
       const receipt = await publicClient!.waitForTransactionReceipt({ hash: launchHash });
       let tokenAddress = "";
-      for (const log of receipt.logs) {
+      for (const log of receipt.logs as any[]) {
         if (!log || !log.data || !log.topics) continue;
         try {
           const decoded = decodeEventLog({
