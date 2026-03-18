@@ -225,7 +225,10 @@ export default function Index() {
   const canLaunch = Boolean(address && walletClient && factoryAddress && recipient);
   const initialAmountStr = useMemo(() => initialUsdcAmountHuman, [initialUsdcAmountHuman]);
 
-  async function fetchTokenMeta(tokenAddress: `0x${string}`) {
+  // Helper to work around viem type strictness with authorizationList
+  const readContract = (params: any) => publicClient!.readContract(params as any) as any;
+
+
     const sym = await publicClient!.readContract({
       address: tokenAddress,
       abi: WRAPPER_ABI,
