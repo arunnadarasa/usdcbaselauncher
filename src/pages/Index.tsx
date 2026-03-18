@@ -5,7 +5,13 @@ import { useAccount, usePublicClient, useSwitchChain, useWalletClient } from "wa
 import { baseSepolia } from "wagmi/chains";
 import { decodeEventLog, formatUnits, isAddress, parseUnits } from "viem";
 
-import "../App.css";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const USDC_ADDRESS = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 const DEFAULT_FACTORY_ADDRESS = "0x0B7a34a6860261e5b0Fc559468CcF792E171a2A2";
