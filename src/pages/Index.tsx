@@ -228,15 +228,7 @@ export default function Index() {
     if (!sendRecipient) setSendRecipient(address);
   }, [address, depositRecipient, redeemRecipient, sendRecipient]);
 
-  const canLaunch = Boolean(
-    address &&
-      factoryAddress.trim() &&
-      recipient.trim() &&
-      suffix.trim() &&
-      initialUsdcAmountHuman.trim() &&
-      isAddress(factoryAddress.trim()) &&
-      isAddress(recipient.trim())
-  );
+  const canLaunch = Boolean(address && walletClient && factoryAddress && recipient);
   const initialAmountStr = useMemo(() => initialUsdcAmountHuman, [initialUsdcAmountHuman]);
 
   // Helper to work around viem type strictness with authorizationList
@@ -590,14 +582,9 @@ export default function Index() {
             <Label>Initial USDC Amount (e.g., 1.25)</Label>
             <Input value={initialUsdcAmountHuman} onChange={(e) => setInitialUsdcAmountHuman(e.target.value)} />
           </div>
-          <Button disabled={!canLaunch} onClick={handleLaunch} className="w-full relative z-10">
-            Approve USDC & Launch
+          <Button disabled={!canLaunch} onClick={handleLaunch} className="w-full">
+            Approve USDC &amp; Launch
           </Button>
-          {!canLaunch && (
-            <p className="text-xs text-muted-foreground">
-              Connect your wallet and fill in all fields above to enable this button.
-            </p>
-          )}
           {status && (
             <pre className="mt-2 whitespace-pre-wrap break-all rounded-md bg-muted p-3 text-xs text-muted-foreground">
               {status}
