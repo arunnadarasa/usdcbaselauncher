@@ -228,8 +228,8 @@ export default function Index() {
   // Helper to work around viem type strictness with authorizationList
   const readContract = (params: any) => publicClient!.readContract(params as any) as any;
 
-
-    const sym = await publicClient!.readContract({
+  async function fetchTokenMeta(tokenAddress: `0x${string}`) {
+    const sym = await readContract({
       address: tokenAddress,
       abi: WRAPPER_ABI,
       functionName: "symbol",
